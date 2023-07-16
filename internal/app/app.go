@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-contrib/pprof"
+	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -28,7 +29,12 @@ func (app Application) Runserver() {
 	router := app.ginEngine
 
 	// 添加 Zap 中間件，將 Gin 請求日誌輸出到 Zap 日誌庫中
-	// router.Use(ginzap.Ginzap(logger, time.RFC3339, true))
+	zepLogger, err := zap.NewProduction()
+	if err != nil {
+		fmt.Println("初始化 Zap 日誌庫失敗:", err)
+		return
+	}
+	router.Use(ginzap.Ginzap(zepLogger, time.RFC3339, true))
 
 	// 設置一個路由處理器，回傳一個簡單的訊息
 	router.GET("/", func(c *gin.Context) {
