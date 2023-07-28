@@ -6,6 +6,7 @@ require (
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-contrib/zap v0.1.0
 	github.com/gin-gonic/gin v1.9.1
+	github.com/google/wire v0.5.0
 	github.com/spf13/cobra v1.7.0
 	go.uber.org/zap v1.24.0
 )

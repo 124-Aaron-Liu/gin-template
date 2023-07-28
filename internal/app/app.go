@@ -20,6 +20,26 @@ type Application struct {
 	ginEngine *gin.Engine
 }
 
+func newGinEngine() *gin.Engine {
+	return gin.New()
+}
+
+func newApplication(logger *zap.SugaredLogger, ginEngine *gin.Engine) Application {
+	return Application{logger, ginEngine}
+}
+
+func newSugaredLogger(logger *zap.Logger) *zap.SugaredLogger {
+	return logger.Sugar()
+}
+
+func newLogger() (*zap.Logger, error) {
+	var zapCfg zap.Config
+
+	zapCfg = zap.NewDevelopmentConfig()
+
+	return zapCfg.Build()
+}
+
 func (app Application) Runserver() {
 
 	// 確保Zap日誌訊息被寫入目的地(defer)
@@ -81,11 +101,4 @@ func (app Application) Runserver() {
 	// 正確地終止程式
 	fmt.Println("程式已結束")
 	os.Exit(0)
-}
-
-func NewApplication() Application {
-	logger, _ := zap.NewProduction()
-
-	ginEngine := gin.New()
-	return Application{logger.Sugar(), ginEngine}
 }

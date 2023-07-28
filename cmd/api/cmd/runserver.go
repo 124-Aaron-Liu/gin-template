@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/124-Aaron-Liu/gin-template/internal/app"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 var runserverCmd = &cobra.Command{
@@ -10,7 +11,10 @@ var runserverCmd = &cobra.Command{
 	Short: "A brief description of your application",
 	Long:  "A longer description that spans multiple lines and likely contains examples",
 	Run: func(cmd *cobra.Command, args []string) {
-		app := app.NewApplication()
+		app, err := app.NewApplication()
+		if err != nil {
+			log.Fatalln(err)
+		}
 		app.Runserver()
 	},
 }
