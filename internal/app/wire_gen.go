@@ -9,7 +9,8 @@ package app
 import (
 	"github.com/124-Aaron-Liu/gin-template/internal/app/api"
 	"github.com/124-Aaron-Liu/gin-template/internal/app/api/handler"
-	"github.com/124-Aaron-Liu/gin-template/internal/app/api/handler/user"
+	user2 "github.com/124-Aaron-Liu/gin-template/internal/app/api/handler/user"
+	"github.com/124-Aaron-Liu/gin-template/internal/app/usecase/user"
 	"github.com/google/wire"
 )
 
@@ -21,7 +22,8 @@ func NewApplication() (Application, error) {
 		return Application{}, err
 	}
 	sugaredLogger := newSugaredLogger(logger)
-	userHandler := user.NewHandler(sugaredLogger)
+	service := user.NewService(sugaredLogger)
+	userHandler := user2.NewHandler(sugaredLogger, service)
 	handlerHandler := handler.NewHandler(sugaredLogger, userHandler)
 	v := api.RouterWrap(handlerHandler)
 	engine := newGinEngine(v)
@@ -32,5 +34,5 @@ func NewApplication() (Application, error) {
 // wire.go:
 
 var providerSet = wire.NewSet(
-	ProviderSet, api.ProviderSet, handler.ProviderSet, user.ProviderSet,
+	ProviderSet, api.ProviderSet, handler.ProviderSet, user2.ProviderSet, wire.Bind(new(user.UseCase), new(user.Service)), user.ProviderSet,
 )
