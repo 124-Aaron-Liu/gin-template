@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"github.com/google/wire"
 	"net/http"
 	"os"
 	"os/signal"
@@ -20,8 +21,10 @@ type Application struct {
 	ginEngine *gin.Engine
 }
 
-func newGinEngine() *gin.Engine {
-	return gin.New()
+func newGinEngine(routerWrapper func(r *gin.Engine)) *gin.Engine {
+	ginEngine := gin.New()
+	routerWrapper(ginEngine)
+	return ginEngine
 }
 
 func newApplication(logger *zap.SugaredLogger, ginEngine *gin.Engine) Application {
@@ -102,3 +105,10 @@ func (app Application) Runserver() {
 	fmt.Println("程式已結束")
 	os.Exit(0)
 }
+
+var ProviderSet = wire.NewSet(
+	newSugaredLogger,
+	newApplication,
+	newGinEngine,
+	newLogger,
+)

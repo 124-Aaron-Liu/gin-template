@@ -7,6 +7,9 @@
 package app
 
 import (
+	"github.com/124-Aaron-Liu/gin-template/internal/app/api"
+	"github.com/124-Aaron-Liu/gin-template/internal/app/api/handler"
+	"github.com/124-Aaron-Liu/gin-template/internal/app/api/handler/user"
 	"github.com/google/wire"
 )
 
@@ -18,7 +21,10 @@ func NewApplication() (Application, error) {
 		return Application{}, err
 	}
 	sugaredLogger := newSugaredLogger(logger)
-	engine := newGinEngine()
+	userHandler := user.NewHandler(sugaredLogger)
+	handlerHandler := handler.NewHandler(sugaredLogger, userHandler)
+	v := api.RouterWrap(handlerHandler)
+	engine := newGinEngine(v)
 	application := newApplication(sugaredLogger, engine)
 	return application, nil
 }
@@ -26,8 +32,5 @@ func NewApplication() (Application, error) {
 // wire.go:
 
 var providerSet = wire.NewSet(
-	newSugaredLogger,
-	newApplication,
-	newGinEngine,
-	newLogger,
+	ProviderSet, api.ProviderSet, handler.ProviderSet, user.ProviderSet,
 )
