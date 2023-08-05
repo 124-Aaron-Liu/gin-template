@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:3.2.10
+    ports:
+      - 6379:6379
+    volumes:
+      - ./.volumes/redis/:/data
+
+  db:
+    platform: 'linux/x86_64'
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: gin-template
+      MYSQL_USER: gin-template
+      MYSQL_PASSWORD: 123456
+    ports:
+      - 3306:3306
+    volumes:
+      - ./.volumes/mysql:/var/lib/mysql
+      - ../migrations/db.sql:/docker-entrypoint-initdb.d/db.sql
